@@ -1,30 +1,41 @@
-class User {
-  constructor(name, email) {
+class Employee {
+  #baseSalary;
+  static totalEmployees = 0;
+  constructor(name, baseSalary) {
     this.name = name;
-    this.email = email;
+    this.#baseSalary = baseSalary;
+    Employee.totalEmployees++;
+  }
+  getSalary() {
+    return this.#baseSalary;
   }
   getInfo() {
-    return `${this.name} (${this.email})`;
+    return `${this.name}: ${this.getSalary()}`;
   }
 }
-class AdminUser extends User {
-  constructor(name, email, permissions) {
-    super(name,email);
-    this.permissions = permissions;
+class Manager extends Employee {
+  constructor(name, baseSalary, teamSize) {
+    super(name, baseSalary);
+    this.teamSize = teamSize;
   }
-getInfo() {
-  return super.getInfo() + " [ADMIN]";
-}
-hasPermission(permission){
-  return this.permissions.includes(permission);
-}
+  getSalary() {
+    const currentSalary = super.getSalary();
+    return currentSalary + this.teamSize * 500;
+  }
+  getInfo() {
+    const currentInfo = super.getInfo();
+    return currentInfo + " [MANAGER]";
+  }
 }
 
-const u1 = new User("Ali", "ali@x.com");
-console.log(u1.getInfo());   // "Ali (ali@x.com)"
+const e1 = new Employee("Ali", 5000);
+const m1 = new Manager("Sara", 6000, 4);
 
-const admin1 = new AdminUser("Sara", "sara@x.com", ["delete_users", "edit_settings"]);
-console.log(admin1.getInfo());                        // "Sara (sara@x.com) [ADMIN]"
-console.log(admin1.hasPermission("delete_users"));    // true
-console.log(admin1.hasPermission("ban_users"));        // false
-console.log(admin1.name);                                // "Sara"
+console.log(e1.getInfo());         // "Ali: $5000"
+console.log(e1.getSalary());        // 5000
+
+console.log(m1.getSalary());        // 8000  (6000 + 4*500)
+console.log(m1.getInfo());          // "Sara: $8000 [MANAGER]"
+console.log(m1.teamSize);            // 4
+
+console.log(Employee.totalEmployees); // 2  (e1 + m1)
