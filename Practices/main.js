@@ -1,7 +1,28 @@
-import getSessionDuration, { createSession } from "./sessionUtils.js";
+import Room from "./Room.js";
+const hotel = new Map();
 
-const session = createSession("ali");
-console.log(session); // { userId: "ali", startTime: 1234567890123 }
+function addRoom(roomNumber, price) {
+  const room = new Room(roomNumber, price);
+  hotel.set(roomNumber, room);
+}
+function bookRoom(roomNumber, date) {
+  if (!hotel.has(roomNumber)) return false;
+  else {
+    const room = hotel.get(roomNumber);
+    return room.book(date);
+  }
+}
 
-// انتظر شوية (أو خليها تتنفذ فوراً، مش هيبقى فيه فرق كبير)
-console.log(getSessionDuration(session)); // رقم صغير جداً، زي 0 أو 0.001 (لأن الوقت قريب جداً من بعضه)
+addRoom(101, 500);
+addRoom(102, 800);
+
+console.log(bookRoom(101, "2026-08-15")); // true
+console.log(bookRoom(101, "2026-08-15")); // false (محجوزة بالفعل)
+console.log(bookRoom(101, "2026-08-16")); // true (تاريخ مختلف، متاح)
+console.log(bookRoom(999, "2026-08-15")); // false (الغرفة مش موجودة أصلاً)
+
+console.log(hotel.get(101).isAvailable("2026-08-15")); // false
+console.log(hotel.get(101).isAvailable("2026-08-20")); // true
+console.log(hotel.get(101).getPrice()); // 500
+
+console.log(Room.totalRoomsCreated); // 2
