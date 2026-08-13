@@ -1,13 +1,97 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 20px 0;
     margin: 0;
-    text-align: center;
-    background-color: navy;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0f5db8, #2a7ae6);
+    color: #fff;
 }
 
 h1 {
-    font-size: 48px;
+    margin: 0 0 24px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+#taskInput {
+    width: min(80vw, 340px);
+    padding: 12px 14px;
+    border: none;
+    border-radius: 8px 0 0 8px;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#addBtn {
+    padding: 12px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #1fdc73;
     color: white;
-    margin: 0;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#addBtn:hover {
+    background-color: #16bd62;
+}
+
+#taskList {
+    width: min(80vw, 420px);
+    list-style: none;
+    padding: 0;
+    margin: 24px auto 0;
+    text-align: left;
+}
+
+#taskList li {
+    background-color: rgba(255, 255, 255, 0.96);
+    color: #1d1d1d;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    font-size: 16px;
+}
+p{
+    color: white;
+    background-color: red;
+    padding: 15px;
+    margin: auto;
+    align-items: center;
+    text-align: center;
+    font-size: 18px;
+    border-radius: 8px;
+}
+
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 30px;
+    }
+
+    #taskInput,
+    #addBtn {
+        width: min(80vw, 280px);
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    #addBtn {
+        width: min(80vw, 280px);
+    }
 }
