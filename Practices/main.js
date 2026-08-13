@@ -1,28 +1,36 @@
-import Room from "./Room.js";
-const hotel = new Map();
-
-function addRoom(roomNumber, price) {
-  const room = new Room(roomNumber, price);
-  hotel.set(roomNumber, room);
-}
-function bookRoom(roomNumber, date) {
-  if (!hotel.has(roomNumber)) return false;
-  else {
-    const room = hotel.get(roomNumber);
-    return room.book(date);
+const url = "https://jsonplaceholder.typicode.com/users";
+class UserService {
+  #cache = new Map();
+  constructor() {}
+  async getUser(userId) {
+    if (!this.#cache.has(userId)) {
+      try {
+        const resp = await fetch(
+          `https://jsonplaceholder.typicode.com/users/${userId}`,
+        );
+        const user = await resp.json();
+        this.#cache.set(userId, user);
+        console.log("the User from API");
+        return user;
+      } catch (error) {
+        console.log("Failed:", error.message);
+      }
+    } else {
+      console.log("the User from cache"); 
+      return this.#cache.get(userId);
+    }
   }
 }
+async function main() {
+  const service = new UserService();
 
-addRoom(101, 500);
-addRoom(102, 800);
+  const user1 = await service.getUser(1); // "From API"
+  console.log(user1.name);
 
-console.log(bookRoom(101, "2026-08-15")); // true
-console.log(bookRoom(101, "2026-08-15")); // false (محجوزة بالفعل)
-console.log(bookRoom(101, "2026-08-16")); // true (تاريخ مختلف، متاح)
-console.log(bookRoom(999, "2026-08-15")); // false (الغرفة مش موجودة أصلاً)
+  const user1Again = await service.getUser(1); // "From cache" — من غير fetch تاني!
+  console.log(user1Again.name);
 
-console.log(hotel.get(101).isAvailable("2026-08-15")); // false
-console.log(hotel.get(101).isAvailable("2026-08-20")); // true
-console.log(hotel.get(101).getPrice()); // 500
-
-console.log(Room.totalRoomsCreated); // 2
+  const user2 = await service.getUser(2); // "From API" — مستخدم مختلف
+  console.log(user2.name);
+}
+main();
