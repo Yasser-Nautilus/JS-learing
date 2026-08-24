@@ -1,4 +1,3 @@
-import formatPrice, { calculateItemTotal, applyDiscount } from "./helpers.js";
 
 const items = [
   { price: 100, quantity: 2 },   // 200
