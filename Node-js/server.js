@@ -5,29 +5,6 @@ import { UrlStore } from "./urlStore.js";
 const store = new UrlStore();
 const BASE_URL = "http://localhost:5000";
 const app = express();
-const validKeys = new Set(["secret123", "key456"]);
-const apiUsage = new Map();
-
-const requestLogger = (req, res, next) => {
-  console.log(new Date().toISOString(), req.method, req.url);
-  next();
-};
-const apiKeyAuth = (req, res, next) => {
-  const key = req.headers["x-api-key"];
-  if (!key) {
-    res.status(401).send("API key required");
-    return;
-  } else if (!validKeys.has(key)) {
-    res.status(403).send("Invalid API key");
-    return;
-  }
-  next();
-};
-const apiUsageTracker = (req, res, next) => {
-  const key = req.headers["x-api-key"];
-  apiUsage.set(key, (apiUsage.get(key) || 0) + 1);
-  next();
-};
 app.use(express.json());
 app.use(requestLogger);
 
