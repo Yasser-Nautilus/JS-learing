@@ -1,37 +1,56 @@
 import express from "express";
-import http from "http";
-import { UrlStore } from "./urlStore.js";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import Task from "./taskModel.js";
 
-const store = new UrlStore();
-const BASE_URL = "http://localhost:5000";
+dotenv.config();
+
+
 const app = express();
 app.use(express.json());
-app.use(requestLogger);
 
-app.get("/stats", (req, res) => {
-  res.send(Object.fromEntries(apiUsage));
-});
-app.post("/shorten", apiKeyAuth, apiUsageTracker, (req, res) => {
-  const link = req.body.link;
-  if (!link) {
-    res.status(400).send("Bad Request: link is required in body");
-    return;
+app.post("/tasks", async (req, res) => {
+  const { title, priority } = req.body;
+  if (!title) {
+    return res.status(400).json({ error: "Title is required" });
   }
-  const code = store.shorten(link);
-  res.status(200).json({ code, shortUrl: `${BASE_URL}/${code}` });
-});
-
-app.get("/:code", apiKeyAuth, apiUsageTracker, (req, res) => {
-  const code = req.params.code;
-  const longUrl = store.resolve(code);
-  console.log(`Resolving code: ${code} to long URL: ${longUrl}`);
-  if (longUrl) {
-    res.redirect(longUrl);
-    return;
+  try {
+    const newTask = await Task.create({ title, priority });
+    res.status(201).json(newTask);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to create task" });
   }
-  res.status(404).send("NotFound");
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port http://localhost:5000");
+app.get("/tasks", async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks)
 });
+
+app.patch("/tasks/:id/complete", (req, res) => {
+  const id = Number(req.params.id);
+  if(Task.findById(id)){
+  const updated = await Task.findByIdAndUpdate(
+    id,
+    { done: true },
+    { returnDocument: 'after' }, );
+}else
+  res.status(404).send("Not Found")
+});
+  
+app.delete("/tasks/:id",async (req,res)=>{
+
+
+
+})
+
+async function startServer() {
+  await mongoose.connect(process.env.MONGODB_URI);
+  console.log("Connected to MongoDB");
+
+  app.listen(3000, () => {
+    console.log("Server running on port 3000");
+  });
+}
+
+startServer();

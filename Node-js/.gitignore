@@ -45,3 +45,5 @@ Thumbs.db
 .cache/
 /.parcel-cache/
 *.tgz
+# Directory for JetBrains IDEs
+.directory
